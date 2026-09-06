@@ -1,10 +1,16 @@
 type MessageTree = Record<string, unknown>;
 
+// High-traffic UI copy gets explicit Egyptian wording. Everything else passes
+// through the generic Egyptian presentation rules below, so new upstream copy
+// is Egyptianized without editing the original locale file.
 const AR_OVERRIDES: Record<string, string> = {
-  // Common
   "common.loading": "بيتم التحميل...",
   "common.error": "حصل خطأ",
   "common.somethingWentWrong": "حصل خطأ، جرّب تاني",
+  "common.create": "اعمل",
+  "common.search": "دوّر",
+  "common.copy": "انسخ",
+  "common.copied": "اتنسخ!",
   "common.fillVariables": "املا المتغيرات",
   "common.fillVariablesDescription": "املا المتغيرات المطلوبة الأول قبل ما تشغّل البرومبت.",
   "common.copiedToClipboard": "اتنسخ للحافظة",
@@ -16,7 +22,6 @@ const AR_OVERRIDES: Record<string, string> = {
   "common.expandAll": "افتح الكل",
   "common.collapseAll": "اقفل الكل",
 
-  // Main navigation
   "nav.collection": "مكتبتي",
   "nav.feed": "الفيد",
   "nav.promptmasters": "محترفي البرومبتات",
@@ -34,11 +39,8 @@ const AR_OVERRIDES: Record<string, string> = {
   "nav.logout": "خروج",
   "nav.ide": "محرر البرومبتات",
   "nav.developers": "للمطورين",
-  "nav.book": "الكتاب",
-  "nav.forKids": "للأطفال",
   "nav.more": "المزيد",
 
-  // Authentication
   "auth.login": "دخول",
   "auth.loginDescription": "اكتب بياناتك عشان تكمل",
   "auth.loginDescriptionOAuth": "ادخل بحسابك عشان تكمل",
@@ -59,7 +61,6 @@ const AR_OVERRIDES: Record<string, string> = {
   "auth.registrationFailed": "معرفناش نعمل الحساب",
   "auth.githubAttributionHint": "ادخل باستخدام GitHub عشان نربط مساهماتك بمجتمع المصادر المفتوحة",
 
-  // Prompts / artifacts
   "prompts.title": "البرومبتات",
   "prompts.create": "اعمل برومبت",
   "prompts.createSkill": "اعمل مهارة",
@@ -121,13 +122,11 @@ const AR_OVERRIDES: Record<string, string> = {
   "prompts.close": "اقفل",
   "prompts.previous": "اللي قبله",
   "prompts.next": "اللي بعده",
-  "prompts.more": "المزيد",
   "prompts.translateToLanguage": "ترجم للغتك",
   "prompts.translationFailed": "الترجمة ما نجحتش",
   "prompts.alreadyTranslated": "المحتوى مترجم بالفعل",
   "prompts.learnHowToWritePrompts": "اتعلم تكتب برومبتات أحسن ←",
 
-  // Search / discovery
   "search.placeholder": "دوّر في البرومبتات...",
   "search.filters": "الفلاتر",
   "search.noResults": "ملقيناش نتائج",
@@ -149,8 +148,6 @@ const AR_OVERRIDES: Record<string, string> = {
   "collection.emptyDescription": "احفظ البرومبتات هنا عشان توصل لها بسرعة",
   "collection.addToCollection": "ضيف للمكتبة",
   "collection.inCollection": "في المكتبة",
-
-  // Workflows / ranking
   "workflows.title": "مسارات الشغل",
   "workflows.description": "برومبتات مترابطة بخطوات واتصالات متسلسلة",
   "workflows.noWorkflows": "مفيش مسارات شغل لسه",
@@ -161,7 +158,6 @@ const AR_OVERRIDES: Record<string, string> = {
   "promptmasters.thisMonth": "الشهر ده",
   "promptmasters.thisWeek": "الأسبوع ده",
 
-  // Homepage
   "homepage.heroTitle": "المكان اللي بيجمع",
   "homepage.heroSubtitle": "برومبتات وأدوات الذكاء الاصطناعي",
   "homepage.heroDescription": "اكتشف البرومبتات والمهارات ومسارات الشغل، احفظ اللي محتاجه وشاركه بسهولة.",
@@ -179,7 +175,6 @@ const AR_OVERRIDES: Record<string, string> = {
   "homepage.featuredPrompts": "برومبتات مميزة",
   "homepage.latestPrompts": "أحدث البرومبتات",
 
-  // Errors / empty states
   "errors.notFound": "الصفحة مش موجودة",
   "errors.unauthorized": "مش مسموح لك تدخل هنا",
   "errors.forbidden": "الدخول مش مسموح",
@@ -197,12 +192,13 @@ const AR_OVERRIDES: Record<string, string> = {
   "serverError.goBack": "ارجع",
   "serverError.helpfulLinks": "ممكن تروح لـ:",
 
-  // Builder
   "heroPromptInput.placeholder": "اوصف البرومبت اللي عايز تعمله...",
   "heroPromptInput.ariaLabel": "اوصف البرومبت اللي عايز تعمله",
   "heroPromptInput.submit": "اعمل برومبت",
   "heroPromptInput.hint": "اضغط عشان تبدأ بالذكاء الاصطناعي",
   "heroPromptInput.modelName": "مساعد البرومبتات",
+  "heroIndustries.searchPlaceholder": "دوّر عن برومبتات...",
+  "heroIndustries.videoTitle": "لقاء GitHub عن المصادر المفتوحة",
   "promptBuilder.title": "مساعد بناء البرومبتات",
   "promptBuilder.openBuilder": "مساعد البرومبتات",
   "promptBuilder.welcomeTitle": "اعمل برومبت بالذكاء الاصطناعي",
@@ -211,8 +207,8 @@ const AR_OVERRIDES: Record<string, string> = {
   "promptBuilder.inputPlaceholder": "اوصف اللي عايز تعمله...",
   "promptBuilder.thinking": "بفكر...",
   "promptBuilder.errorMessage": "حصل خطأ. جرّب تاني.",
+  "ide.title": "مساعد بناء البرومبتات",
 
-  // Support / remove source brand from public Arabic copy
   "support.title": "المساعدة",
   "support.description": "دوّر على إجابة لسؤالك أو اعرف تستخدم المنصة إزاي.",
   "support.faq.title": "أسئلة شائعة",
@@ -225,7 +221,6 @@ const AR_OVERRIDES: Record<string, string> = {
   "support.faq.selfHost.question": "ينفع أشغّل نسخة خاصة بيا؟",
   "support.faq.selfHost.answer": "أيوه. المشروع مبني بحيث تقدر تشغّل نسخة خاصة وتتحكم في الإعدادات والبيانات والهوية البصرية.",
 
-  // Footer / cookies
   "footer.howTo": "إزاي تستخدمه",
   "footer.docs": "الشرح",
   "footer.api": "واجهة البرمجة",
@@ -240,55 +235,154 @@ const AR_OVERRIDES: Record<string, string> = {
   "cookies.confirmReject": "أيوه، ارفض"
 };
 
-// Keep these technical/product names intact. They are names or executable formats,
-// not untranslated UI copy.
-const TECHNICAL_ONLY = /^(https?:\/\/|npx\s|npm\s|yarn\s|pnpm\s|[\w@./:-]+\.(?:md|json|yaml|yml|csv|ts|tsx|js|jsx))/i;
+// Technical identifiers and executable-looking strings are intentionally left
+// untouched. This prevents the UI layer from altering code, URLs, file names,
+// model names, MCP commands, JSON/YAML examples, or the actual prompt content.
+const TECHNICAL_ONLY = /^(https?:\/\/|npx\s|npm(?:\s|$)|yarn\s|pnpm\s|[\w@./:-]+\.(?:md|json|yaml|yml|csv|ts|tsx|js|jsx)|Node\.js\b|PostgreSQL\b)/i;
 
+const ENGLISH_UI: Record<string, string> = {
+  "Promptmasters": "محترفي البرومبتات",
+  "Taste": "الذوق",
+  "Prompt Builder": "مساعد بناء البرومبتات",
+  "Typed-Prompts IDE": "محرر البرومبتات",
+  "App Store": "متجر التطبيقات",
+  "Toggle menu": "افتح أو اقفل القايمة",
+  "Toggle theme": "غيّر شكل العرض",
+  "Get Browser Extension": "نزّل إضافة المتصفح",
+  "GitHub Open Source Friday": "لقاء GitHub عن المصادر المفتوحة",
+  "Webhooks": "ويب هوكس",
+  "Open": "افتح",
+  "Close": "اقفل",
+  "Search": "دوّر",
+  "Copy": "انسخ",
+  "Download": "نزّل",
+  "Loading...": "بيتم التحميل..."
+};
+
+// Ordered from specific phrases to broad vocabulary so grammar stays natural.
 const AR_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/هذا البرومبت/g, "البرومبت ده"],
+  [/هذا الأمر/g, "البرومبت ده"],
+  [/هذه المطالبة/g, "البرومبت دي"],
+  [/هذه المهارة/g, "المهارة دي"],
+  [/هذه الصفحة/g, "الصفحة دي"],
+  [/هذه النافذة/g, "النافذة دي"],
+  [/هذه التغييرات/g, "التغييرات دي"],
+  [/هذه الأرصدة/g, "الأرصدة دي"],
+  [/هذه الروابط/g, "الروابط دي"],
+  [/هذه الملفات/g, "الملفات دي"],
+  [/هذه البيانات/g, "البيانات دي"],
+  [/هذا الإجراء/g, "الإجراء ده"],
+  [/هذا الحقل/g, "الحقل ده"],
+  [/هذا الرابط/g, "الرابط ده"],
+  [/هذا الملف/g, "الملف ده"],
+  [/هذا المستخدم/g, "المستخدم ده"],
+  [/هذا التصنيف/g, "التصنيف ده"],
+  [/هذا الوسم/g, "التاج ده"],
+  [/سير العمل/g, "مسار الشغل"],
+  [/سير عمل/g, "مسار شغل"],
+  [/المطالبات/g, "البرومبتات"],
+  [/مطالبات/g, "برومبتات"],
+  [/المطالبة/g, "البرومبت"],
+  [/مطالبة/g, "برومبت"],
+  [/الأوامر/g, "البرومبتات"],
+  [/أوامر/g, "برومبتات"],
+  [/الأمر/g, "البرومبت"],
+  [/أمرك/g, "البرومبت بتاعك"],
+  [/أمر/g, "برومبت"],
+  [/سطر البرومبتات/g, "سطر الأوامر"],
+  [/الوسوم/g, "التاجات"],
+  [/وسوم/g, "تاجات"],
+  [/الوسم/g, "التاج"],
+  [/وسم/g, "تاج"],
+  [/البريد الإلكتروني/g, "الإيميل"],
+  [/كلمة المرور/g, "كلمة السر"],
+  [/الصورة الرمزية/g, "صورة الحساب"],
+  [/الملف الشخصي/g, "البروفايل"],
+  [/المستخدمون/g, "المستخدمين"],
+  [/المساهمون/g, "المساهمين"],
+  [/الاستجابة/g, "الرد"],
+  [/استجابة/g, "رد"],
   [/جاري /g, "بيتم "],
   [/جارٍ /g, "بيتم "],
+  [/تم إنشاء/g, "اتعمل"],
+  [/تم تحديث/g, "اتحدّث"],
+  [/تم حذف/g, "اتحذف"],
+  [/تم نسخ/g, "اتنسخ"],
+  [/تم إرسال/g, "اتبعت"],
+  [/تمت إضافة/g, "اتضاف"],
+  [/تمت إزالة/g, "اتشال"],
+  [/تمت الإضافة/g, "اتضاف"],
+  [/تمت الإزالة/g, "اتشال"],
+  [/تم العثور على/g, "لقينا"],
+  [/لم يتم العثور على/g, "ملقيناش"],
+  [/لم يتم/g, "ما تمش"],
+  [/يتم الآن/g, "بيتم دلوقتي"],
+  [/سيتم/g, "هيتم"],
+  [/لن يتم/g, "مش هيتم"],
+  [/سيؤدي/g, "هيؤدي"],
+  [/يؤدي إلى/g, "بيؤدي لـ"],
+  [/سيظل/g, "هيفضل"],
+  [/لن يظهر/g, "مش هيظهر"],
+  [/سيظهر/g, "هيظهر"],
   [/حدث خطأ ما/g, "حصل خطأ"],
   [/حدث خطأ/g, "حصل خطأ"],
   [/يرجى /g, "من فضلك "],
   [/الرجاء /g, "من فضلك "],
-  [/لم يتم العثور على/g, "ملقيناش"],
-  [/تم العثور على/g, "لقينا"],
   [/لا توجد/g, "مفيش"],
   [/لا يوجد/g, "مفيش"],
   [/ليس لديك/g, "معندكش"],
   [/لديك بالفعل/g, "عندك بالفعل"],
+  [/لا يمكنك/g, "مينفعش"],
   [/لا يمكن/g, "مينفعش"],
   [/يمكنك/g, "تقدر"],
-  [/سيتم/g, "هيتم"],
-  [/لن يتم/g, "مش هيتم"],
-  [/سيظل/g, "هيفضل"],
-  [/لن يظهر/g, "مش هيظهر"],
-  [/سيظهر/g, "هيظهر"],
-  [/اختر/g, "اختار"],
-  [/أدخل/g, "اكتب"],
-  [/انقر/g, "اضغط"],
-  [/حاول/g, "جرّب"],
-  [/ابحث/g, "دوّر"],
-  [/للبدء/g, "عشان تبدأ"],
-  [/للمتابعة/g, "عشان تكمل"],
-  [/مرة أخرى/g, "تاني"],
+  [/تستطيع/g, "تقدر"],
+  [/تحتاج إلى/g, "محتاج"],
+  [/تحتاج/g, "محتاج"],
+  [/يجب أن/g, "لازم"],
+  [/يجب/g, "لازم"],
+  [/ماذا/g, "إيه"],
+  [/لماذا/g, "ليه"],
+  [/كيف/g, "إزاي"],
+  [/متى/g, "إمتى"],
+  [/أين/g, "فين"],
+  [/الآن/g, "دلوقتي"],
   [/لاحقاً/g, "بعد كده"],
   [/لاحقًا/g, "بعد كده"],
+  [/مرة أخرى/g, "تاني"],
   [/أيضاً/g, "كمان"],
   [/أيضًا/g, "كمان"],
   [/بالإضافة إلى/g, "وكمان"],
   [/من خلال/g, "عن طريق"],
-  [/هذا/g, "ده"],
-  [/هذه/g, "دي"],
-  [/الذي/g, "اللي"],
-  [/التي/g, "اللي"],
-  [/الذين/g, "اللي"],
+  [/فقط/g, "بس"],
   [/جميع/g, "كل"],
   [/أكثر/g, "أكتر"],
+  [/جداً/g, "أوي"],
+  [/جدًا/g, "أوي"],
+  [/قليلاً/g, "شوية"],
+  [/قليلًا/g, "شوية"],
+  [/هذا/g, "ده"],
+  [/هذه/g, "دي"],
+  [/هؤلاء/g, "دول"],
+  [/الذين/g, "اللي"],
+  [/الذي/g, "اللي"],
+  [/التي/g, "اللي"],
+  [/اختر/g, "اختار"],
+  [/أدخل/g, "اكتب"],
+  [/انقر/g, "اضغط"],
+  [/تصفح/g, "شوف"],
+  [/للبدء/g, "عشان تبدأ"],
+  [/للمتابعة/g, "عشان تكمل"],
   [/أخبرنا/g, "قول لنا"],
   [/لم تقم/g, "ماعملتش"],
   [/غير موجودة/g, "مش موجودة"],
-  [/غير موجود/g, "مش موجود"]
+  [/غير موجود/g, "مش موجود"],
+  [/العودة إلى/g, "ارجع لـ"],
+  [/العودة للخريطة/g, "ارجع للخريطة"],
+  [/العودة للأمر/g, "ارجع للبرومبت"],
+  [/(^|\s)حاول(?=\s|[.!؟،]|$)/g, "$1جرّب"],
+  [/اللين/g, "اللي"],
+  [/مجرّبة/g, "محاولة"]
 ];
 
 function neutralBrandReplacement(locale: string): string {
@@ -299,40 +393,26 @@ function neutralBrandReplacement(locale: string): string {
 }
 
 function normalizeString(value: string, locale: string, path: string): string {
-  // Explicit Egyptian copy wins over any generic rewrite.
-  if (locale === "ar" && AR_OVERRIDES[path]) {
-    return AR_OVERRIDES[path];
-  }
+  if (locale === "ar" && AR_OVERRIDES[path]) return AR_OVERRIDES[path];
 
-  // Never rewrite executable/code-like values.
-  if (TECHNICAL_ONLY.test(value.trim())) {
-    return value;
-  }
+  const trimmed = value.trim();
+  if (TECHNICAL_ONLY.test(trimmed)) return value;
 
-  // Remove the upstream trademark from user-facing copy in every locale.
+  // Remove upstream trademark copy from user-facing text in every locale.
   let result = value.replace(/prompts\.chat/gi, neutralBrandReplacement(locale));
-
   if (locale !== "ar") return result;
 
-  // Translate the few English UI labels that historically leaked into ar.json.
-  const exactEnglishUi: Record<string, string> = {
-    Promptmasters: "محترفي البرومبتات",
-    Taste: "الذوق",
-    "Typed-Prompts IDE": "محرر البرومبتات",
-    "App Store": "متجر التطبيقات",
-    "Toggle menu": "افتح أو اقفل القايمة",
-    "Toggle theme": "غيّر شكل العرض",
-    "Get Browser Extension": "نزّل إضافة المتصفح"
-  };
-  if (exactEnglishUi[result]) return exactEnglishUi[result];
+  if (ENGLISH_UI[result]) return ENGLISH_UI[result];
 
-  // Only Egyptianize Arabic prose; leave product/model names and code tokens alone.
+  // Product/model names and short technical labels are intentionally preserved.
   if (!/[\u0600-\u06FF]/.test(result)) return result;
 
   for (const [pattern, replacement] of AR_REPLACEMENTS) {
     result = result.replace(pattern, replacement);
   }
-  return result;
+
+  // Clean spacing introduced by phrase-level transforms.
+  return result.replace(/\s{2,}/g, " ").replace(/\s+([،.!؟:])/g, "$1");
 }
 
 function walk(value: unknown, locale: string, path = ""): unknown {
@@ -348,12 +428,6 @@ function walk(value: unknown, locale: string, path = ""): unknown {
   );
 }
 
-/**
- * Presentation layer for localized messages.
- * - Arabic is presented as professional Egyptian Arabic.
- * - prompts.chat trademark copy is removed from all user-facing locales.
- * - Original locale files stay untouched for easier upstream syncing.
- */
 export function prepareMessagesForLocale(messages: MessageTree, locale: string): MessageTree {
   return walk(messages, locale) as MessageTree;
 }

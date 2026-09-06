@@ -1,3 +1,4 @@
+import { getLocale } from "next-intl/server";
 import { getConfig } from "@/lib/config";
 
 interface StructuredDataProps {
@@ -26,9 +27,41 @@ interface StructuredDataProps {
   };
 }
 
+function getPublicBaseUrl() {
+  const configured = process.env.NEXTAUTH_URL?.replace(/\/$/, "");
+  if (configured) return configured;
+
+  const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (productionHost) return `https://${productionHost}`;
+
+  const deploymentHost = process.env.VERCEL_URL;
+  if (deploymentHost) return `https://${deploymentHost}`;
+
+  return "http://localhost:3000";
+}
+
 export async function StructuredData({ type, data }: StructuredDataProps) {
   const config = await getConfig();
-  const baseUrl = process.env.NEXTAUTH_URL || "https://prompts.chat";
+  const locale = await getLocale();
+  const baseUrl = getPublicBaseUrl();
+  const isWhiteLabel = config.homepage?.useCloneBranding === true;
+  const isArabic = locale === "ar";
+
+  const promptSteps = isArabic
+    ? [
+        { name: "انسخ البرومبت", text: data?.prompt?.content || "" },
+        { name: "حطه في أداة الذكاء الاصطناعي", text: "افتح ChatGPT أو Claude أو Gemini أو الأداة اللي بتستخدمها، والصق البرومبت." },
+        { name: "خد النتيجة", text: "أداة الذكاء الاصطناعي هترد حسب تعليمات البرومبت." },
+      ]
+    : [
+        { name: "Copy the prompt", text: data?.prompt?.content || "" },
+        { name: "Paste it into your AI assistant", text: "Open ChatGPT, Claude, Gemini, or your preferred AI assistant and paste the prompt." },
+        { name: "Get the result", text: "The AI assistant will respond according to the prompt instructions." },
+      ];
+
+  const featureList = isArabic
+    ? ["مكتبة برومبتات", "مشاركة واكتشاف البرومبتات", "مساهمات المجتمع", "سجل الإصدارات", "تصنيفات وتاجات"]
+    : ["AI prompt library", "Prompt sharing and discovery", "Community contributions", "Version history", "Categories and tags"];
 
   const schemas: Record<string, object | null> = {
     organization: {
@@ -43,11 +76,15 @@ export async function StructuredData({ type, data }: StructuredDataProps) {
         height: 512,
       },
       description: config.branding.description,
-      sameAs: [
-        "https://github.com/f/prompts.chat",
-        "https://x.com/promptschat",
-        "https://x.com/fkadev",
-      ],
+      ...(isWhiteLabel
+        ? {}
+        : {
+            sameAs: [
+              "https://github.com/f/prompts.chat",
+              "https://x.com/promptschat",
+              "https://x.com/fkadev",
+            ],
+          }),
     },
     website: {
       "@context": "https://schema.org",
@@ -91,27 +128,15 @@ export async function StructuredData({ type, data }: StructuredDataProps) {
           "@type": "HowTo",
           "@id": `${baseUrl}/prompts/${data.prompt.id}`,
           name: data.prompt.name,
-          description: data.prompt.description || `AI prompt: ${data.prompt.name}`,
-          step: [
-            {
-              "@type": "HowToStep",
-              name: "Copy the prompt",
-              text: data.prompt.content.substring(0, 500) + (data.prompt.content.length > 500 ? "..." : ""),
-              position: 1,
-            },
-            {
-              "@type": "HowToStep",
-              name: "Paste into your AI assistant",
-              text: "Open ChatGPT, Claude, Gemini, or your preferred AI assistant and paste the prompt.",
-              position: 2,
-            },
-            {
-              "@type": "HowToStep",
-              name: "Get your response",
-              text: "The AI will respond according to the prompt instructions.",
-              position: 3,
-            },
-          ],
+          description: data.prompt.description || (isArabic ? `برومبت: ${data.prompt.name}` : `AI prompt: ${data.prompt.name}`),
+          step: promptSteps.map((step, index) => ({
+            "@type": "HowToStep",
+            name: step.name,
+            text: index === 0
+              ? data.prompt!.content.substring(0, 500) + (data.prompt!.content.length > 500 ? "..." : "")
+              : step.text,
+            position: index + 1,
+          })),
           tool: [
             {
               "@type": "HowToTool",
@@ -166,14 +191,7 @@ export async function StructuredData({ type, data }: StructuredDataProps) {
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
       },
-      featureList: [
-        "AI prompt library",
-        "Prompt sharing and discovery",
-        "Community contributions",
-        "Version history",
-        "Categories and tags",
-      ],
-      screenshot: `${baseUrl}/og.png`,
+      featureList,
     },
     itemList: data?.items
       ? {
@@ -199,7 +217,7 @@ export async function StructuredData({ type, data }: StructuredDataProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
     />
   );
 }
