@@ -2,6 +2,12 @@
 
 > Guidelines for AI coding agents working on this project.
 
+## Inherited NEW PERSONAL BRAIN governance
+
+This project is tracked by NEW PERSONAL BRAIN and inherits **GPG-1.0.0** through `BRAIN_GOVERNANCE.md`.
+
+Before making changes, read `BRAIN_GOVERNANCE.md` in addition to this file. The inherited Brain guardrails are a minimum safety/execution baseline; the local rules below remain active and may be stricter. Do not silently weaken either set of rules.
+
 ## Project Overview
 
 **prompts.chat** is a social platform for AI prompts built with Next.js 16. It allows users to share, discover, and collect prompts from the community. The project is open source and can be self-hosted with customizable branding, themes, and authentication.
