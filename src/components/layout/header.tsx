@@ -77,13 +77,16 @@ import {
 } from "@/components/ui/context-menu";
 import { NotificationBell } from "@/components/layout/notification-bell";
 import { setLocale } from "@/lib/i18n/client";
+import { visibleLocales } from "@/lib/i18n/config";
 import { useBranding } from "@/components/providers/branding-provider";
 import { analyticsAuth, analyticsSettings, analyticsExternal } from "@/lib/analytics";
 import { isChromeBrowser, isFirefoxBrowser } from "@/lib/utils";
 
 const FIREFOX_ADDON_URL = "https://addons.mozilla.org/firefox/downloads/file/4675190/prompts_chat-1.4.1.xpi";
 
-const languages = [
+// Keep the full language registry intact. Which languages are exposed to users
+// is controlled centrally by visibleLocales in src/lib/i18n/config.ts.
+const allLanguages = [
   { code: "en", name: "English" },
   { code: "zh", name: "中文" },
   { code: "es", name: "Español" },
@@ -102,6 +105,11 @@ const languages = [
   { code: "he", name: "עברית" },
   { code: "el", name: "Ελληνικά" }
 ];
+
+const visibleLocaleSet = new Set<string>(visibleLocales);
+const languages = allLanguages.filter((language) =>
+  visibleLocaleSet.has(language.code),
+);
 
 interface HeaderProps {
   authProvider?: string;

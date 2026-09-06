@@ -42,8 +42,10 @@ export default defineConfig({
 
   // Internationalization
   i18n: {
+    // Keep all existing locales registered. Visibility is controlled separately
+    // by visibleLocales in src/lib/i18n/config.ts.
     locales: ["en", "tr", "es", "zh", "ja", "ar", "pt", "fr", "it", "de", "nl", "ko", "ru", "he", "el", "az", "fa"],
-    defaultLocale: "en",
+    defaultLocale: "ar",
   },
 
   // Features
