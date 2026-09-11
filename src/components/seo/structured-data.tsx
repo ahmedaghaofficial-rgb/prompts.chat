@@ -49,9 +49,9 @@ export async function StructuredData({ type, data }: StructuredDataProps) {
 
   const promptSteps = isArabic
     ? [
-        { name: "انسخ البرومبت", text: data?.prompt?.content || "" },
-        { name: "حطه في أداة الذكاء الاصطناعي", text: "افتح ChatGPT أو Claude أو Gemini أو الأداة اللي بتستخدمها، والصق البرومبت." },
-        { name: "خد النتيجة", text: "أداة الذكاء الاصطناعي هترد حسب تعليمات البرومبت." },
+        { name: "انسخ الأمر", text: data?.prompt?.content || "" },
+        { name: "حطه في أداة الذكاء الاصطناعي", text: "افتح ChatGPT أو Claude أو Gemini أو الأداة اللي بتستخدمها، والصق الأمر." },
+        { name: "خد النتيجة", text: "أداة الذكاء الاصطناعي هترد حسب تعليمات الأمر." },
       ]
     : [
         { name: "Copy the prompt", text: data?.prompt?.content || "" },
@@ -60,7 +60,7 @@ export async function StructuredData({ type, data }: StructuredDataProps) {
       ];
 
   const featureList = isArabic
-    ? ["مكتبة برومبتات", "مشاركة واكتشاف البرومبتات", "مساهمات المجتمع", "سجل الإصدارات", "تصنيفات وتاجات"]
+    ? ["مكتبة أوامر", "مشاركة واكتشاف الأوامر", "مساهمات المجتمع", "سجل الإصدارات", "تصنيفات ووسوم"]
     : ["AI prompt library", "Prompt sharing and discovery", "Community contributions", "Version history", "Categories and tags"];
 
   const schemas: Record<string, object | null> = {
@@ -128,7 +128,7 @@ export async function StructuredData({ type, data }: StructuredDataProps) {
           "@type": "HowTo",
           "@id": `${baseUrl}/prompts/${data.prompt.id}`,
           name: data.prompt.name,
-          description: data.prompt.description || (isArabic ? `برومبت: ${data.prompt.name}` : `AI prompt: ${data.prompt.name}`),
+          description: data.prompt.description || (isArabic ? `أمر: ${data.prompt.name}` : `AI prompt: ${data.prompt.name}`),
           step: promptSteps.map((step, index) => ({
             "@type": "HowToStep",
             name: step.name,
