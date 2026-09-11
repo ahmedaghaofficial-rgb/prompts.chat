@@ -1,14 +1,28 @@
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { getAllChapters } from "@/lib/book/chapters";
+import config from "@/../prompts.config";
 
 // Revalidate sitemap every hour (3600 seconds)
 export const revalidate = 3600;
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXTAUTH_URL || "https://prompts.chat";
+function getPublicBaseUrl() {
+  const configured = process.env.NEXTAUTH_URL?.replace(/\/$/, "");
+  if (configured) return configured;
 
-  // Static pages - always included
+  const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (productionHost) return `https://${productionHost}`;
+
+  const deploymentHost = process.env.VERCEL_URL;
+  if (deploymentHost) return `https://${deploymentHost}`;
+
+  return "http://localhost:3000";
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = getPublicBaseUrl();
+  const isWhiteLabel = config.homepage?.useCloneBranding === true;
+
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -34,22 +48,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.7,
     },
-    {
-      url: `${baseUrl}/book`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
+    ...(!isWhiteLabel
+      ? [{
+          url: `${baseUrl}/book`,
+          lastModified: new Date(),
+          changeFrequency: "weekly" as const,
+          priority: 0.8,
+        }]
+      : []),
   ];
 
-  // Book chapter pages
-  const chapters = getAllChapters();
-  const bookPages: MetadataRoute.Sitemap = chapters.map((chapter) => ({
-    url: `${baseUrl}/book/${chapter.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly",
-    priority: 0.7,
-  }));
+  const bookPages: MetadataRoute.Sitemap = isWhiteLabel
+    ? []
+    : getAllChapters().map((chapter) => ({
+        url: `${baseUrl}/book/${chapter.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      }));
 
   // Dynamic pages - skip if database is unavailable (e.g., during build)
   try {
@@ -87,7 +103,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...staticPages, ...bookPages, ...categoryPages, ...promptPages, ...tagPages];
   } catch {
-    // Database unavailable (build time) - return static and book pages only
     return [...staticPages, ...bookPages];
   }
 }
