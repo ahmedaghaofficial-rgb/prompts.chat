@@ -2,6 +2,7 @@ import { getRequestConfig } from "next-intl/server";
 import { cookies } from "next/headers";
 import { LOCALE_COOKIE, supportedLocales, defaultLocale } from "@/lib/i18n/config";
 import { prepareMessagesForLocale } from "@/lib/i18n/egyptian-ui";
+import { applyWhiteLabel } from "@/lib/i18n/white-label";
 import { applySemanticArabic } from "@/lib/i18n/semantic-ar";
 import { IntlErrorCode } from "next-intl";
 
@@ -24,9 +25,9 @@ export default getRequestConfig(async () => {
   }
 
   // Keep upstream locale files unchanged and apply our presentation layers here.
-  // First: Egyptian tone + public white-label cleanup.
-  // Second: semantic wording (for example Prompt -> أمر) across the Arabic UI.
+  // 1) Egyptian tone, 2) white-label source scrub, 3) semantic Arabic wording.
   messages = prepareMessagesForLocale(messages, locale);
+  messages = applyWhiteLabel(messages, locale);
   messages = applySemanticArabic(messages, locale);
 
   return {
