@@ -10,6 +10,26 @@ const EXACT_ARABIC_COPY: Record<string, string> = {
   "محترفي البرومبتات": "أفضل صانعي الأوامر",
   "الفيد بتاعك": "تحديثاتك",
   "شوف الفيد": "شوف آخر التحديثات",
+  "الخلاصة": "التحديثات",
+  "Promptmasters": "صنّاع الأوامر",
+  "Typed-Prompts IDE": "محرر الأوامر",
+  "Prompt Builder": "منشئ الأوامر",
+  "Taste": "أسلوبك",
+  "Tastes": "أساليب البرمجة",
+};
+
+const ARABIC_PATH_OVERRIDES: Record<string, string> = {
+  "nav.feed": "التحديثات",
+  "nav.promptmasters": "صنّاع الأوامر",
+  "nav.taste": "أسلوبك",
+  "nav.ide": "محرر الأوامر",
+  "prompts.createTaste": "إنشاء أسلوب برمجة",
+  "prompts.tastesDescription": "أساليب البرمجة هي ملفات بسيطة بتوضح طريقتك وتفضيلاتك في كتابة الكود، علشان أدوات البرمجة بالذكاء الاصطناعي تقدر تقرّب من أسلوبك وتلتزم بقواعدك.",
+  "heroIndustries.videoTitle": "فيديو تعريفي",
+  "ide.title": "محرر الأوامر",
+  "developers.promptBuilder": "محرر الأوامر",
+  "feed.yourFeed": "تحديثاتك",
+  "feed.feedDescription": "أوامر من التصنيفات اللي متابعها",
 };
 
 const ARABIC_TERM_RULES: Array<[RegExp, string]> = [
@@ -19,6 +39,10 @@ const ARABIC_TERM_RULES: Array<[RegExp, string]> = [
   [/برومبتات/g, "أوامر"],
   [/البرومبت/g, "الأمر"],
   [/برومبت/g, "أمر"],
+  [/المطالبات/g, "الأوامر"],
+  [/مطالبات/g, "أوامر"],
+  [/المطالبة/g, "الأمر"],
+  [/مطالبة/g, "أمر"],
   [/التاجات/g, "الوسوم"],
   [/تاجات/g, "وسوم"],
   [/التاج/g, "الوسم"],
@@ -28,6 +52,11 @@ const ARABIC_TERM_RULES: Array<[RegExp, string]> = [
   [/الموديل/g, "النموذج"],
   [/موديل/g, "نموذج"],
   [/الفيد/g, "آخر التحديثات"],
+  [/Typed-Prompts IDE/g, "محرر الأوامر"],
+  [/Prompt Builder/g, "منشئ الأوامر"],
+  [/Promptmasters/g, "صنّاع الأوامر"],
+  [/Tastes/g, "أساليب البرمجة"],
+  [/Taste/g, "أسلوب البرمجة"],
 ];
 
 function translateSemanticArabicCopy(value: string): string {
@@ -40,18 +69,22 @@ function translateSemanticArabicCopy(value: string): string {
   return result;
 }
 
-function mapTree(value: unknown): unknown {
+function mapTree(value: unknown, path: string[] = []): unknown {
   if (typeof value === "string") {
-    return translateSemanticArabicCopy(value);
+    const key = path.join(".");
+    return translateSemanticArabicCopy(ARABIC_PATH_OVERRIDES[key] ?? value);
   }
 
   if (Array.isArray(value)) {
-    return value.map(mapTree);
+    return value.map((item, index) => mapTree(item, [...path, String(index)]));
   }
 
   if (value && typeof value === "object") {
     return Object.fromEntries(
-      Object.entries(value as MessageTree).map(([key, nestedValue]) => [key, mapTree(nestedValue)]),
+      Object.entries(value as MessageTree).map(([key, nestedValue]) => [
+        key,
+        mapTree(nestedValue, [...path, key]),
+      ]),
     );
   }
 
@@ -62,9 +95,8 @@ function mapTree(value: unknown): unknown {
  * Final Arabic presentation pass.
  *
  * The upstream locale and the Egyptian override layer are intentionally kept
- * separate. This pass converts borrowed product jargon to the everyday meaning
- * we want in the Arabic UI (for example Prompt -> أمر) and removes leftover
- * source-project phrasing from user-facing copy.
+ * separate. This pass converts borrowed product jargon to everyday Egyptian
+ * Arabic meaning (for example Prompt -> أمر) without changing internal keys.
  */
 export function applySemanticArabic(messages: MessageTree, locale: string): MessageTree {
   if (locale !== "ar") return messages;
