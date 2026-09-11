@@ -85,10 +85,14 @@ export default async function KidsLayout({
           className="absolute w-16 h-8 opacity-70 animate-cloud-medium"
           style={{ top: "12%", left: 0, animationDelay: "-15s" }}
         />
+        <PixelCloudBg 
+          className="absolute w-36 h-18 opacity-60 animate-cloud-fast"
+          style={{ top: "28%", left: 0, animationDelay: "-8s" }}
+        />
       </div>
 
       <KidsHeader />
-      <main className="relative flex-1 overflow-y-auto overflow-x-hidden">
+      <main className="flex-1 min-h-0 overflow-hidden">
         {children}
       </main>
     </div>
