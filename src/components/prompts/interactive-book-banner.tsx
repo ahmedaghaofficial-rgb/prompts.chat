@@ -5,12 +5,20 @@ import Image from "next/image";
 import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { useBranding } from "@/components/providers/branding-provider";
 
 export function InteractiveBookBanner() {
   const t = useTranslations("promptWritingGuide.interactiveBanner");
+  const branding = useBranding();
   const BOOK_WIDTH = 120;
   const BOOK_HEIGHT = 173;
   const BOOK_DEPTH = 15;
+
+  // The bundled promotion links to the upstream author's commercial book.
+  // Keep the guide itself, but never expose that promotion in white-label mode.
+  if (branding.useCloneBranding) {
+    return null;
+  }
 
   return (
     <div className="mb-8 border rounded-[var(--radius)] overflow-hidden bg-gradient-to-br from-primary/5 via-background to-primary/10 p-6">
@@ -52,7 +60,6 @@ export function InteractiveBookBanner() {
       `}</style>
 
       <div className="flex flex-col sm:flex-row items-center gap-6">
-        {/* 3D Book */}
         <Link
           href="https://fka.gumroad.com/l/art-of-chatgpt-prompting"
           className="shrink-0"
@@ -66,7 +73,6 @@ export function InteractiveBookBanner() {
               transformStyle: "preserve-3d",
             }}
           >
-            {/* FRONT: Book Cover */}
             <div className="absolute inset-0 rounded-sm shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300">
               <Image
                 src="/book-cover.jpg"
@@ -74,7 +80,6 @@ export function InteractiveBookBanner() {
                 fill
                 className="object-cover"
               />
-              {/* Subtle radial light glow from top-right */}
               <div
                 className="banner-light-anim absolute inset-0 pointer-events-none"
                 style={{
@@ -84,10 +89,8 @@ export function InteractiveBookBanner() {
               />
             </div>
 
-            {/* Drop shadow under book */}
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-16 h-3 bg-black/20 blur-md rounded-full opacity-50" />
 
-            {/* RIGHT: Pages edge */}
             <div
               className="absolute top-0"
               style={{
@@ -101,7 +104,6 @@ export function InteractiveBookBanner() {
               }}
             />
 
-            {/* LEFT: Spine edge */}
             <div
               className="absolute top-0 rounded-l-sm"
               style={{
@@ -116,7 +118,6 @@ export function InteractiveBookBanner() {
           </div>
         </Link>
 
-        {/* Content */}
         <div className="flex-1 text-center sm:text-left">
           <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
             <Sparkles className="h-4 w-4 text-primary" />
