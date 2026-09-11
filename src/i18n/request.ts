@@ -2,6 +2,7 @@ import { getRequestConfig } from "next-intl/server";
 import { cookies } from "next/headers";
 import { LOCALE_COOKIE, supportedLocales, defaultLocale } from "@/lib/i18n/config";
 import { prepareMessagesForLocale } from "@/lib/i18n/egyptian-ui";
+import { applySemanticArabic } from "@/lib/i18n/semantic-ar";
 import { IntlErrorCode } from "next-intl";
 
 export default getRequestConfig(async () => {
@@ -22,10 +23,11 @@ export default getRequestConfig(async () => {
     messages = (await import(`@/../messages/${defaultLocale}.json`)).default;
   }
 
-  // Keep upstream locale files unchanged and apply our presentation layer here.
-  // Arabic becomes Egyptian Arabic; upstream trademark copy is neutralized in
-  // every locale before it reaches the public UI.
+  // Keep upstream locale files unchanged and apply our presentation layers here.
+  // First: Egyptian tone + public white-label cleanup.
+  // Second: semantic wording (for example Prompt -> أمر) across the Arabic UI.
   messages = prepareMessagesForLocale(messages, locale);
+  messages = applySemanticArabic(messages, locale);
 
   return {
     locale,
