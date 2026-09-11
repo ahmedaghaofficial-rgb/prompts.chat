@@ -1,8 +1,10 @@
 import { Schoolbell } from "next/font/google";
 import { getLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
 import { KidsHeader } from "@/components/kids/layout/kids-header";
 import { MusicProvider } from "@/components/kids/layout/background-music";
 import { LevelProvider } from "@/components/kids/providers/level-context";
+import config from "@/../prompts.config";
 
 const RTL_LOCALES = ["ar", "he", "fa"];
 
@@ -35,6 +37,12 @@ export default async function KidsLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // The bundled kids experience has upstream-specific identity and mascot work.
+  // Do not leak that identity into a white-label deployment.
+  if (config.homepage?.useCloneBranding) {
+    notFound();
+  }
+
   const locale = await getLocale();
   const isRtl = RTL_LOCALES.includes(locale);
 
@@ -77,14 +85,10 @@ export default async function KidsLayout({
           className="absolute w-16 h-8 opacity-70 animate-cloud-medium"
           style={{ top: "12%", left: 0, animationDelay: "-15s" }}
         />
-        <PixelCloudBg 
-          className="absolute w-36 h-18 opacity-60 animate-cloud-fast"
-          style={{ top: "28%", left: 0, animationDelay: "-8s" }}
-        />
       </div>
 
       <KidsHeader />
-      <main className="flex-1 min-h-0 overflow-hidden">
+      <main className="relative flex-1 overflow-y-auto overflow-x-hidden">
         {children}
       </main>
     </div>
