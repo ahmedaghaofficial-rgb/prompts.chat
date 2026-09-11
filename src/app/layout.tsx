@@ -59,7 +59,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const title = config.branding.name;
   const description = isArabic
-    ? "مكتبة بتجمع وتنظم وتشارك البرومبتات والمهارات ومسارات الشغل وأدوات الذكاء الاصطناعي."
+    ? "مكتبة بتجمع وتنظم وتشارك أوامر الذكاء الاصطناعي والمهارات ومسارات الشغل والأدوات في مكان واحد."
     : isFrench
       ? "Une bibliothèque pour découvrir, organiser et partager des prompts, des compétences et des workflows d’IA."
       : "Discover, organize, and share AI prompts, skills, workflows, and practical AI resources.";
@@ -72,7 +72,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description,
     keywords: isArabic
-      ? ["برومبتات الذكاء الاصطناعي", "مكتبة برومبتات", "مهارات الذكاء الاصطناعي", "مسارات الشغل", "ChatGPT", "Claude"]
+      ? ["أوامر الذكاء الاصطناعي", "مكتبة أوامر", "صياغة الأوامر", "مهارات الذكاء الاصطناعي", "مسارات الشغل", "ChatGPT", "Claude"]
       : ["AI prompts", "prompt library", "AI skills", "AI workflows", "ChatGPT", "Claude"],
     authors: [{ name: title }],
     creator: title,
