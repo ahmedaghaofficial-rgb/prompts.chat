@@ -114,7 +114,8 @@ export function VisualCommandList({ prompts }: VisualCommandListProps) {
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
       {prompts.map((prompt) => {
         const { alias, summary } = splitDescription(prompt.description);
-        const categoryLabel = CATEGORY_LABELS[prompt.tags[0]?.tag.slug] || "أمر بصري";
+        const primaryTagSlug = prompt.tags[0]?.tag.slug;
+        const categoryLabel = primaryTagSlug ? CATEGORY_LABELS[primaryTagSlug] || "أمر بصري" : "أمر بصري";
         const url = getPromptUrl(prompt.id, prompt.slug);
 
         return (
