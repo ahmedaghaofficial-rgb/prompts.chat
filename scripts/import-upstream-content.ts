@@ -139,7 +139,8 @@ async function fetchAllPrompts(): Promise<RemotePrompt[]> {
 
 function validateAndSummarize(prompts: RemotePrompt[]) {
   const ids = new Set<string>();
-  const slugs = new Set<string>();
+  const slugCounts = new Map<string, number>();
+  const tagNameToSlug = new Map<string, string>();
   const counts = new Map<string, number>();
   let multiFileSkills = 0;
 
@@ -150,10 +151,7 @@ function validateAndSummarize(prompts: RemotePrompt[]) {
     ids.add(prompt.id);
 
     const slug = prompt.slug || `upstream-${prompt.id}`;
-    if (slugs.has(slug)) {
-      throw new Error(`Duplicate upstream slug: ${slug}`);
-    }
-    slugs.add(slug);
+    slugCounts.set(slug, (slugCounts.get(slug) || 0) + 1);
 
     if (typeof prompt.content !== "string" || prompt.content.length === 0) {
       throw new Error(`Prompt has no full content: ${prompt.id} (${prompt.title})`);
@@ -183,12 +181,24 @@ function validateAndSummarize(prompts: RemotePrompt[]) {
       );
     }
 
+    for (const tag of prompt.tags || []) {
+      const existingSlug = tagNameToSlug.get(tag.name);
+      if (existingSlug && existingSlug !== tag.slug) {
+        throw new Error(
+          `Tag name collision: ${tag.name} is used by both ${existingSlug} and ${tag.slug}`
+        );
+      }
+      tagNameToSlug.set(tag.name, tag.slug);
+    }
+
     counts.set(prompt.type, (counts.get(prompt.type) || 0) + 1);
 
     if (prompt.type === "SKILL" && prompt.content.includes("\x1FFILE:")) {
       multiFileSkills++;
     }
   }
+
+  const duplicateSlugs = [...slugCounts.entries()].filter(([, count]) => count > 1);
 
   console.log("\n📊 Upstream content summary");
   console.log(`   total: ${prompts.length}`);
@@ -204,8 +214,17 @@ function validateAndSummarize(prompts: RemotePrompt[]) {
     console.log(`   ${type}: ${counts.get(type) || 0}`);
   }
   console.log(`   multi-file skills: ${multiFileSkills}`);
+  console.log(`   duplicate slugs (allowed; IDs are canonical): ${duplicateSlugs.length}`);
+  if (duplicateSlugs.length > 0) {
+    console.log(
+      `   duplicate slug examples: ${duplicateSlugs
+        .slice(0, 10)
+        .map(([slug, count]) => `${slug}×${count}`)
+        .join(", ")}`
+    );
+  }
 
-  return { counts, slugs };
+  return { counts, ids };
 }
 
 async function getOrCreateLibraryUser() {
@@ -343,19 +362,19 @@ async function importOnePrompt(
   categoryIds: Map<string, string>,
   tagIds: Map<string, string>
 ) {
-  const slug = remote.slug || `upstream-${remote.id}`;
   const desiredTagIds = (remote.tags || [])
     .map((tag) => tagIds.get(tag.slug))
     .filter((id): id is string => Boolean(id));
 
-  const existing = await prisma.prompt.findFirst({
-    where: { slug },
+  const existing = await prisma.prompt.findUnique({
+    where: { id: remote.id },
     select: { id: true, content: true },
   });
 
   if (!existing) {
     const created = await prisma.prompt.create({
       data: {
+        id: remote.id,
         ...promptData(remote, authorId, categoryIds),
         tags: {
           create: desiredTagIds.map((tagId) => ({ tagId })),
@@ -441,14 +460,13 @@ async function runPool<T>(
 }
 
 async function verifyImportedContent(prompts: RemotePrompt[]) {
-  const expected = new Map(
-    prompts.map((p) => [p.slug || `upstream-${p.id}`, p] as const)
-  );
-  const slugs = [...expected.keys()];
+  const expected = new Map(prompts.map((p) => [p.id, p] as const));
+  const ids = [...expected.keys()];
 
   const localRows = await prisma.prompt.findMany({
-    where: { slug: { in: slugs } },
+    where: { id: { in: ids } },
     select: {
+      id: true,
       slug: true,
       content: true,
       type: true,
@@ -464,24 +482,24 @@ async function verifyImportedContent(prompts: RemotePrompt[]) {
     );
   }
 
-  const localMap = new Map(localRows.map((row) => [row.slug!, row]));
+  const localMap = new Map(localRows.map((row) => [row.id, row]));
   const mismatches: string[] = [];
 
-  for (const [slug, remote] of expected) {
-    const local = localMap.get(slug);
+  for (const [id, remote] of expected) {
+    const local = localMap.get(id);
     if (!local) {
-      mismatches.push(`${slug}: missing`);
+      mismatches.push(`${id}: missing`);
       continue;
     }
 
     if (local.content !== remote.content) {
-      mismatches.push(`${slug}: content mismatch`);
+      mismatches.push(`${id}: content mismatch`);
     }
     if (local.type !== remote.type) {
-      mismatches.push(`${slug}: type ${local.type} != ${remote.type}`);
+      mismatches.push(`${id}: type ${local.type} != ${remote.type}`);
     }
     if (local.isPrivate || local.isUnlisted || local.deletedAt) {
-      mismatches.push(`${slug}: not publicly visible`);
+      mismatches.push(`${id}: not publicly visible`);
     }
 
     if (mismatches.length >= 20) break;
@@ -495,7 +513,7 @@ async function verifyImportedContent(prompts: RemotePrompt[]) {
 
   const grouped = await prisma.prompt.groupBy({
     by: ["type"],
-    where: { slug: { in: slugs } },
+    where: { id: { in: ids } },
     _count: { _all: true },
   });
 
