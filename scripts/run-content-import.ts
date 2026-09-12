@@ -21,5 +21,12 @@ function normalizeDatabaseUrl() {
   }
 }
 
-normalizeDatabaseUrl();
-await import("./import-upstream-content");
+async function main() {
+  normalizeDatabaseUrl();
+  await import("./import-upstream-content");
+}
+
+main().catch((error) => {
+  console.error("❌ Content import bootstrap failed:", error);
+  process.exit(1);
+});
