@@ -8,13 +8,16 @@ function normalizeDatabaseUrl() {
       url.hostname.endsWith(".pooler.supabase.com") && url.port === "6543";
 
     if (isSupabaseTransactionPooler) {
-      if (!url.searchParams.has("pgbouncer")) {
-        url.searchParams.set("pgbouncer", "true");
-      }
-      if (!url.searchParams.has("connection_limit")) {
-        url.searchParams.set("connection_limit", "1");
-      }
+      url.searchParams.set("pgbouncer", "true");
+
+      const importConnectionLimit =
+        process.env.CONTENT_IMPORT_CONNECTION_LIMIT || "8";
+      url.searchParams.set("connection_limit", importConnectionLimit);
       process.env.DATABASE_URL = url.toString();
+
+      console.log(
+        `🔌 Content import using Supabase transaction pooler with connection_limit=${importConnectionLimit}`
+      );
     }
   } catch {
     // Let Prisma surface the original connection error.
