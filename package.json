@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npx tsx scripts/import-upstream-content.ts && next build",
     "db:deploy": "prisma migrate deploy",
     "start": "next start",
     "lint": "eslint",
@@ -13,6 +13,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
+    "content:import": "npx tsx scripts/import-upstream-content.ts",
     "db:resetadmin": "npx tsx prisma/reset-admin.ts",
     "db:setup": "prisma generate && prisma migrate dev && prisma db seed",
     "setup": "node scripts/setup.js",
