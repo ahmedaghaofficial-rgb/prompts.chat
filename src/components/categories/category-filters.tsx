@@ -17,9 +17,10 @@ type SortOption = (typeof SORT_OPTIONS)[number];
 
 interface CategoryFiltersProps {
   categorySlug: string;
+  showSort?: boolean;
 }
 
-export function CategoryFilters({ categorySlug }: CategoryFiltersProps) {
+export function CategoryFilters({ categorySlug, showSort = true }: CategoryFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("categories");
@@ -34,7 +35,6 @@ export function CategoryFilters({ categorySlug }: CategoryFiltersProps) {
     } else {
       params.delete(key);
     }
-    // Reset to page 1 when filters change
     params.delete("page");
     router.push(`/categories/${categorySlug}?${params.toString()}`);
   };
@@ -52,30 +52,32 @@ export function CategoryFilters({ categorySlug }: CategoryFiltersProps) {
   };
 
   return (
-    <div className="flex items-center gap-2 flex-1 md:flex-none">
-      <div className="relative flex-1 md:flex-none">
-        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+    <div className={`flex items-center gap-2 ${showSort ? "flex-1 md:flex-none" : "w-full"}`}>
+      <div className={`relative flex-1 ${showSort ? "md:flex-none" : "w-full"}`}>
+        <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground rtl:left-auto rtl:right-2.5" />
         <Input
           type="search"
           placeholder={t("searchPlaceholder")}
           defaultValue={currentSearch}
           onKeyDown={handleSearchKeyDown}
           onBlur={handleSearchBlur}
-          className="pl-8 h-8 w-full md:w-[180px] text-sm"
+          className={`${showSort ? "md:w-[180px]" : "w-full md:w-[360px]"} h-10 pl-8 text-sm rtl:pl-3 rtl:pr-8`}
         />
       </div>
-      <Select value={currentSort} onValueChange={(value) => updateParams("sort", value)}>
-        <SelectTrigger size="sm" className="h-8 text-sm">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent align="end">
-          {SORT_OPTIONS.map((option) => (
-            <SelectItem key={option} value={option}>
-              {t(`sort.${option}`)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {showSort && (
+        <Select value={currentSort} onValueChange={(value) => updateParams("sort", value)}>
+          <SelectTrigger size="sm" className="h-10 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent align="end">
+            {SORT_OPTIONS.map((option) => (
+              <SelectItem key={option} value={option}>
+                {t(`sort.${option}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
     </div>
   );
 }
