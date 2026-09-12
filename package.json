@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx tsx scripts/run-content-import.ts && npx tsx scripts/run-arabia-visual-commands.ts && next build",
+    "build": "next build",
     "db:deploy": "prisma migrate deploy",
     "start": "next start",
     "lint": "eslint",
