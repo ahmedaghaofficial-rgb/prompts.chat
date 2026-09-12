@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx tsx scripts/run-content-import.ts && npx tsx scripts/run-arabia-visual-commands.ts && next build",
+    "build": "next build",
     "db:deploy": "prisma migrate deploy",
     "start": "next start",
     "lint": "eslint",
@@ -28,7 +28,7 @@
     "book:pdf:all": "npx tsx scripts/generate-book-pdf.ts --all",
     "book:pdf:convert": "npx tsx scripts/html-to-pdf.ts",
     "book:pdf:print": "npx tsx scripts/generate-book-pdf.ts --print && npx tsx scripts/html-to-pdf.ts --print",
-    "book:pdf:print:all": "npx tsx scripts/generate-book-pdf.ts --all --print && npx tsx scripts/html-to-pdf.ts --all --print"
+    "book:pdf:print:all": "npx tsx scripts/generate-book-pdf.ts --all --print && npx tsx scripts/html-to-pdf.ts --print"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
